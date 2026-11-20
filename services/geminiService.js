@@ -4,7 +4,7 @@ async function askGemini(prompt) {
   let response;
   for(let attempt=0;attempt<3;attempt++){
     try {
-      response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}]}), signal:AbortSignal.timeout(25000) });
+      response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1200}}), signal:AbortSignal.timeout(25000) });
     } catch(error) {
       if(error.name==='TimeoutError'||error.name==='AbortError') {
         const timeoutError=new Error('Gemini request timed out.');
