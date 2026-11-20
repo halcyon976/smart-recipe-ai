@@ -1,0 +1,6 @@
+# Keep local secrets, installed packages, and uploaded user content out of version control.
+.env
+node_modules/
+public/uploads/*
+!public/uploads/.gitkeep
+npm-debug.log*

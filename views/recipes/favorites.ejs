@@ -1,0 +1,3 @@
+<!-- Saved recipes and their empty state. -->
+<span class="eyebrow">YOUR COLLECTION</span><h1 class="mb-4">Favorites</h1><% if(recipes.length){ %><div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4"><% recipes.forEach(recipe=>{ %><%- include('../partials/recipe-card',{recipe,showFavorite:true}) %><% }) %></div><% }else{ %><div class="empty-state"><div class="empty-icon">♡</div><h2>No favorites yet</h2><p>Save recipes you want to cook again and they'll show up here.</p><a href="/recipes" class="btn btn-primary">Find recipes</a></div><% } %>
+
