@@ -20,8 +20,16 @@ CREATE TABLE IF NOT EXISTS recipes (
   cuisine VARCHAR(80) NOT NULL DEFAULT 'Other',
   tags TEXT[] NOT NULL DEFAULT '{}',
   image_path TEXT,
+  image_source_url TEXT,
+  image_credit TEXT,
+  image_license TEXT,
+  image_license_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_source_url TEXT;
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_credit TEXT;
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_license TEXT;
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_license_url TEXT;
 CREATE TABLE IF NOT EXISTS favorites (
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,

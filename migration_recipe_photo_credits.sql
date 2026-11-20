@@ -1,0 +1,4 @@
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_source_url TEXT;
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_credit TEXT;
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_license TEXT;
+ALTER TABLE recipes ADD COLUMN IF NOT EXISTS image_license_url TEXT;

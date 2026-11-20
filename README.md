@@ -33,6 +33,8 @@ A beginner-friendly recipe sharing app built with Express, EJS, Bootstrap, vanil
 
 `schema.sql` creates `users`, `recipes`, `favorites`, `recipe_history`, and `chat_messages`, with primary keys, foreign keys, and useful indexes. Session data is stored in PostgreSQL using `connect-pg-simple`. The schema and models use plain SQL through `pg`.
 
+For an existing hosted database, run `migration_recipe_photo_credits.sql` once before deploying the Openverse recipe-photo feature. It adds the photo source and license fields used to preserve credits when a generated recipe is saved.
+
 ## Features
 
 - Signup, login, logout, password hashing, and protected pages
