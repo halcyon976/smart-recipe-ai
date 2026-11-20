@@ -121,7 +121,7 @@ function showRecipe(recipe, output) {
   } else {
     const note = document.createElement('p');
     note.className = 'small text-muted';
-    note.textContent = 'No matching public-domain or CC0 photo was found this time.';
+    note.textContent = 'No matching reusable photo was found this time.';
     output.append(note);
   }
 

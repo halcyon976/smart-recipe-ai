@@ -10,22 +10,24 @@ exports.findForRecipe = async (title) => {
 
   const query = new URLSearchParams({
     q: `${title} food`,
-    license: 'cc0,pdm',
-    category: 'photograph',
+    license: 'cc0,pdm,by,by-sa',
     mature: 'false',
     filter_dead: 'true',
     page_size: '5'
   });
 
   try {
-    const response = await fetch(`https://api.openverse.org/v1/images/?${query}`, {
+    const response = await fetch(`https://api.openverse.engineering/v1/images/?${query}`, {
       headers: { Accept: 'application/json' },
       signal: AbortSignal.timeout(8000)
     });
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.warn(`Openverse photo search returned HTTP ${response.status}.`);
+      return null;
+    }
     const data = await response.json();
     const result = (data.results || []).find(item =>
-      item && item.mature === false && ['cc0', 'pdm'].includes(String(item.license).toLowerCase()) &&
+      item && item.mature !== true && ['cc0', 'pdm', 'by', 'by-sa'].includes(String(item.license).toLowerCase()) &&
       isOpenverseThumbnail(item.thumbnail) && isHttpUrl(item.foreign_landing_url) && isHttpUrl(item.license_url)
     );
     const image = result ? {
@@ -53,13 +55,13 @@ exports.resolveSavedPhoto = async (thumbnailUrl) => {
   if (photoCache.has(id)) return photoCache.get(id);
 
   try {
-    const response = await fetch(`https://api.openverse.org/v1/images/${id}/`, {
+    const response = await fetch(`https://api.openverse.engineering/v1/images/${id}/`, {
       headers: { Accept: 'application/json' },
       signal: AbortSignal.timeout(8000)
     });
     if (!response.ok) return null;
     const item = await response.json();
-    if (item.mature !== false || !['cc0', 'pdm'].includes(String(item.license).toLowerCase()) ||
+    if (item.mature === true || !['cc0', 'pdm', 'by', 'by-sa'].includes(String(item.license).toLowerCase()) ||
         !isOpenverseThumbnail(item.thumbnail) || imageIdFromThumbnail(item.thumbnail) !== id ||
         !isHttpUrl(item.foreign_landing_url) || !isHttpUrl(item.license_url)) return null;
     const photo = {
@@ -80,7 +82,7 @@ exports.resolveSavedPhoto = async (thumbnailUrl) => {
 function isOpenverseThumbnail(value) {
   try {
     const url = new URL(value);
-    return url.protocol === 'https:' && url.hostname === 'api.openverse.org' && /^\/v1\/images\/[\w-]+\/thumb\/$/.test(url.pathname);
+    return url.protocol === 'https:' && ['api.openverse.org', 'api.openverse.engineering'].includes(url.hostname) && /^\/v1\/images\/[\w-]+\/thumb\/$/.test(url.pathname);
   } catch {
     return false;
   }
@@ -89,7 +91,7 @@ function isOpenverseThumbnail(value) {
 function imageIdFromThumbnail(value) {
   try {
     const url = new URL(value);
-    const match = url.protocol === 'https:' && url.hostname === 'api.openverse.org'
+    const match = url.protocol === 'https:' && ['api.openverse.org', 'api.openverse.engineering'].includes(url.hostname)
       ? url.pathname.match(/^\/v1\/images\/([\w-]+)\/thumb\/$/)
       : null;
     return match?.[1] || null;
