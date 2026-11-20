@@ -58,3 +58,14 @@ CREATE TABLE IF NOT EXISTS email_verification_tokens (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS email_verification_tokens_user_idx ON email_verification_tokens(user_id);
+
+-- These tables are accessed only by the Express server through its private
+-- PostgreSQL connection. Do not expose them through Supabase's public Data API.
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
+ALTER TABLE recipe_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE password_reset_tokens ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_verification_tokens ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.session ENABLE ROW LEVEL SECURITY;
