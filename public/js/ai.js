@@ -88,43 +88,6 @@ function showSuggestion(recipe, output) {
 }
 
 function showRecipe(recipe, output) {
-  if (recipe.image?.url) {
-    const figure = document.createElement('figure');
-    figure.className = 'mb-4';
-
-    const image = document.createElement('img');
-    image.src = recipe.image.url;
-    image.alt = `Photo of ${recipe.title}`;
-    image.className = 'recipe-image rounded-3 w-100';
-    image.loading = 'lazy';
-    image.referrerPolicy = 'no-referrer';
-    image.addEventListener('error', () => figure.remove(), { once: true });
-    figure.append(image);
-
-    const credit = document.createElement('figcaption');
-    credit.className = 'small text-muted mt-1';
-    credit.append('Photo: ');
-    const source = document.createElement('a');
-    source.href = recipe.image.sourceUrl;
-    source.target = '_blank';
-    source.rel = 'noopener noreferrer';
-    source.textContent = `${recipe.image.title} by ${recipe.image.creator}`;
-    credit.append(source, ` · ${recipe.image.license} · `);
-    const license = document.createElement('a');
-    license.href = recipe.image.licenseUrl;
-    license.target = '_blank';
-    license.rel = 'noopener noreferrer';
-    license.textContent = 'license';
-    credit.append(license, ' · via Openverse');
-    figure.append(credit);
-    output.append(figure);
-  } else {
-    const note = document.createElement('p');
-    note.className = 'small text-muted';
-    note.textContent = 'No matching reusable photo was found this time.';
-    output.append(note);
-  }
-
   const title = document.createElement('h2');
   title.className = 'h4';
   title.textContent = recipe.title;
@@ -197,8 +160,7 @@ function saveRecipe(recipe) {
     cuisine: 'AI generated',
     ingredients: recipe.ingredients.join('\n'),
     steps: recipe.steps.join('\n'),
-    tags: 'AI generated',
-    image_path: recipe.image?.url || ''
+    tags: 'AI generated'
   };
 
   Object.entries(fields).forEach(([name, value]) => {
