@@ -88,6 +88,13 @@ function showSuggestion(recipe, output) {
 }
 
 function showRecipe(recipe, output) {
+  const image = document.createElement('img');
+  image.src = '/images/food.svg';
+  image.alt = `Illustration for ${recipe.title}`;
+  image.className = 'recipe-image rounded-3 w-100 mb-3';
+  image.loading = 'lazy';
+  output.append(image);
+
   const title = document.createElement('h2');
   title.className = 'h4';
   title.textContent = recipe.title;
