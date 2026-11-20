@@ -3,7 +3,16 @@ async function askGemini(prompt) {
   // Real Gemini API call belongs here. Keep GEMINI_API_KEY on the server only.
   let response;
   for(let attempt=0;attempt<3;attempt++){
-    response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}]}) });
+    try {
+      response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}]}), signal:AbortSignal.timeout(25000) });
+    } catch(error) {
+      if(error.name==='TimeoutError'||error.name==='AbortError') {
+        const timeoutError=new Error('Gemini request timed out.');
+        timeoutError.code='GEMINI_TIMEOUT';
+        throw timeoutError;
+      }
+      throw error;
+    }
     if(response.ok)break;
     if(![429,500,503].includes(response.status)||attempt===2){let detail='';try{const payload=await response.json();detail=payload.error?.message||'';}catch{}const error=new Error(`Gemini request failed (${response.status})${detail?`: ${detail}`:''}`);error.status=response.status;throw error;}
     const retryAfter=Number(response.headers.get('retry-after'));
