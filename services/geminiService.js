@@ -4,7 +4,7 @@ async function askGemini(prompt) {
   let response;
   for(let attempt=0;attempt<3;attempt++){
     try {
-      response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1200}}), signal:AbortSignal.timeout(25000) });
+      response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent', { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:2200}}), signal:AbortSignal.timeout(35000) });
     } catch(error) {
       if(error.name==='TimeoutError'||error.name==='AbortError') {
         const timeoutError=new Error('Gemini request timed out.');
@@ -30,7 +30,7 @@ Your task is to identify a real, established recipe that people already cook and
 
 Ignore ingredients that do not belong in the selected dish and list them as unused. Never force every pantry item into one meal. Do not add special ingredients the user did not list, except ordinary staples such as water, salt, black pepper, or cooking oil.
 
-If a known recipe can be cooked with the listed ingredients and ordinary staples, return mode "ready" and give realistic quantities, clear steps, a plausible cooking time, and food-safe instructions. The dish name must be a recognized recipe name, not a newly invented combination such as a title formed by joining several pantry ingredients.
+If a known recipe can be cooked with the listed ingredients and ordinary staples, return mode "ready" and give realistic quantities for 4 servings, a plausible cooking time, and food-safe instructions. Make the recipe useful for a beginner: include 6 to 10 numbered steps, with about 1 to 3 clear sentences per step. Say how to prepare the ingredients, how hot the pan or oven should be, when to add each ingredient, how long to cook it, and what visual or texture cue shows it is ready. Include safe internal temperatures when relevant. Avoid vague steps like "cook until done" and avoid padding the instructions with repeated advice. The dish name must be a recognized recipe name, not a newly invented combination such as a title formed by joining several pantry ingredients.
 
 If no known recipe can be made with the listed ingredients, but a recognizable recipe could be made by adding only one or two important ingredients, return mode "needs_more". Name the known dish, list only the missing ingredient(s), and do not provide cooking steps or a saveable recipe yet. Never suggest more than two missing ingredients. If there is no confident match within this rule, return an error.
 
