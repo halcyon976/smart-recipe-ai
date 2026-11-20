@@ -36,14 +36,55 @@ if (generator) {
         return;
       }
 
+      if (recipe.mode === 'needs_more') {
+        showSuggestion(recipe, output);
+        return;
+      }
       showRecipe(recipe, output);
     } catch (error) {
       output.textContent = error.message;
     } finally {
       generator.disabled = false;
-      generator.textContent = '✨ Make me a recipe';
+      generator.textContent = '✨ Find a recipe';
     }
   });
+}
+
+function showSuggestion(recipe, output) {
+  const title = document.createElement('h2');
+  title.className = 'h4';
+  title.textContent = `A dish to try: ${recipe.title}`;
+  output.append(title);
+
+  const explanation = document.createElement('p');
+  explanation.textContent = recipe.explanation || 'This familiar recipe needs a couple more ingredients.';
+  output.append(explanation);
+
+  const heading = document.createElement('h3');
+  heading.className = 'h6';
+  heading.textContent = 'You would need';
+  output.append(heading);
+
+  const list = document.createElement('ul');
+  recipe.missing_ingredients.forEach(item => {
+    const row = document.createElement('li');
+    row.textContent = item;
+    list.append(row);
+  });
+  output.append(list);
+
+  const note = document.createElement('p');
+  note.className = 'text-muted small';
+  note.textContent = 'Add these to your list of ingredients and try again to get the cooking instructions.';
+  output.append(note);
+
+  if (recipe.recipe_id) {
+    const link = document.createElement('a');
+    link.className = 'btn btn-outline-primary mt-2';
+    link.href = `/recipes/${encodeURIComponent(recipe.recipe_id)}`;
+    link.textContent = 'View this recipe';
+    output.append(link);
+  }
 }
 
 function showRecipe(recipe, output) {
@@ -92,11 +133,19 @@ function showRecipe(recipe, output) {
   });
   output.append(stepsList);
 
-  const saveButton = document.createElement('button');
-  saveButton.className = 'btn btn-outline-primary mt-2';
-  saveButton.textContent = 'Save to My recipes';
-  saveButton.addEventListener('click', () => saveRecipe(recipe));
-  output.append(saveButton);
+  if (recipe.recipe_id) {
+    const link = document.createElement('a');
+    link.className = 'btn btn-outline-primary mt-2';
+    link.href = `/recipes/${encodeURIComponent(recipe.recipe_id)}`;
+    link.textContent = 'Open full recipe';
+    output.append(link);
+  } else {
+    const saveButton = document.createElement('button');
+    saveButton.className = 'btn btn-outline-primary mt-2';
+    saveButton.textContent = 'Save to My recipes';
+    saveButton.addEventListener('click', () => saveRecipe(recipe));
+    output.append(saveButton);
+  }
 }
 
 function saveRecipe(recipe) {
